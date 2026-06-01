@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#120619" />
+  <title>Spotify Jam Odası</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div id="stars"></div>
+    <div id="hearts"></div>
+  </div>
+
+  <main class="app">
+    <section id="lockScreen" class="lock-screen">
+      <div class="glass lock-card">
+        <div class="badge">Spotify Jam • Özel Oda • Canlı Bağlantı</div>
+        <h1>Spotify Jam Odası</h1>
+        <p>Çalma listesi, Jam bağlantısı, canlı mesajlaşma ve isteğe bağlı sesli konuşma tek yerde.</p>
+        <div class="lock-form">
+          <label for="passwordInput">Oda şifresi</label>
+          <input id="passwordInput" type="password" placeholder="Oda şifresi" autocomplete="off" />
+          <button id="unlockBtn" class="primary">Odaya Gir</button>
+          <p id="passwordError" class="error"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="room" class="room hidden">
+      <header class="hero glass">
+        <div>
+          <div class="badge">Birlikte dinleme alanı</div>
+          <h1>Spotify Jam Odası</h1>
+          <p>
+            Jam ve çalma listesi burada paylaşılır. Mesajlaşma canlı çalışır.
+            Sesli bağlantı için iki taraf da butona basar, mikrofon izni verir ve bağlantı otomatik kurulur.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="copyPageBtn" class="ghost">Sayfa Linkini Kopyala</button>
+          <button id="clearRoomBtn" class="danger">Odayı Temizle</button>
+        </div>
+      </header>
+
+      <section class="glass card identity-card">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">1. Adım</span>
+            <h2>Odaya kim olarak giriyorsun?</h2>
+          </div>
+          <span id="selectedPersonBadge" class="status-pill">Henüz seçilmedi</span>
+        </div>
+        <div class="person-grid">
+          <button class="person-btn" data-person="Levent">Levent</button>
+          <button class="person-btn" data-person="Zeynep">Zeynep</button>
+        </div>
+        <div class="presence-grid">
+          <div><span>Levent</span><strong id="leventOnline">Bekliyor</strong></div>
+          <div><span>Zeynep</span><strong id="zeynepOnline">Bekliyor</strong></div>
+        </div>
+      </section>
+
+      <section class="glass card live-chat-card">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">2. Adım</span>
+            <h2>Canlı mesajlaşma ve sesli bağlantı</h2>
+          </div>
+          <span id="connectionStatus" class="status-pill">Firebase bağlanıyor</span>
+        </div>
+
+        <div class="mode-panel">
+          <div class="mode-buttons">
+            <button id="chatModeBtn" class="primary">Mesajlaşma Modu</button>
+            <button id="voiceModeBtn" class="secondary">Sesli Bağlantıya Geç</button>
+          </div>
+
+          <div class="voice-status-grid">
+            <div><span>Levent ses</span><strong id="leventVoiceReady">Bekliyor</strong></div>
+            <div><span>Zeynep ses</span><strong id="zeynepVoiceReady">Bekliyor</strong></div>
+          </div>
+
+          <div id="voicePanel" class="voice-panel hidden">
+            <div class="voice-stat">
+              <span>Sesli bağlantı süresi</span>
+              <strong id="voiceTimer">00:00</strong>
+            </div>
+            <div class="button-row wrap">
+              <button id="holdVoiceBtn" class="ghost">Askıya Al</button>
+              <button id="resumeVoiceBtn" class="secondary">Devam Et</button>
+              <button id="closeVoiceBtn" class="danger">Sesli Bağlantıyı Kapat</button>
+            </div>
+            <p id="voiceNotice" class="tiny">
+              Sesli bağlantı için iki taraf da “Sesli Bağlantıya Geç” butonuna basmalı ve mikrofon izni vermeli.
+            </p>
+          </div>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div id="chatInputWrap" class="chat-input">
+          <input id="messageInput" placeholder="Bu şarkı bana seni hatırlattı..." />
+          <button id="sendBtn" class="primary">Gönder</button>
+        </div>
+
+        <audio id="remoteAudio" autoplay playsinline></audio>
+      </section>
+
+      <section class="glass card call-history-card">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Görüşme Geçmişi</span>
+            <h2>Sesli bağlantı kayıtları</h2>
+          </div>
+          <button id="clearCallHistoryBtn" class="ghost">Geçmişi Temizle</button>
+        </div>
+        <div id="callHistory" class="call-history"></div>
+      </section>
+
+      <section class="glass card spotify-card">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">3. Adım</span>
+            <h2>Spotify bağlantıları</h2>
+          </div>
+        </div>
+
+        <div class="spotify-grid">
+          <div>
+            <label>Spotify çalma listesi bağlantısı
+              <input id="playlistInput" placeholder="https://open.spotify.com/playlist/..." />
+            </label>
+            <label>Spotify Jam davet bağlantısı
+              <input id="jamInput" placeholder="https://spotify.link/..." />
+            </label>
+            <div class="button-row">
+              <button id="saveLinksBtn" class="primary">Linkleri Kaydet</button>
+              <button id="clearLinksBtn" class="ghost">Temizle</button>
+            </div>
+            <div class="quick-actions">
+              <a id="playlistBtn" class="action disabled" target="_blank" rel="noopener">
+                <strong>Playlist’i Aç</strong><span>Spotify’da ortak liste</span>
+              </a>
+              <a id="jamBtn" class="action disabled" target="_blank" rel="noopener">
+                <strong>Jam’e Katıl</strong><span>Spotify uygulamasında buluş</span>
+              </a>
+            </div>
+          </div>
+          <div>
+            <div id="spotifyEmbed" class="spotify-embed">Playlist linki kaydedilince Spotify kartı burada görünecek.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid two">
+        <article class="glass card session-card">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Ortak An</span>
+              <h2>Dinleme seansı</h2>
+            </div>
+            <button id="startSessionBtn" class="secondary">Seansı Başlat</button>
+          </div>
+          <div class="timer-box">
+            <span>Seans süresi</span>
+            <strong id="sessionTimer">00:00:00</strong>
+          </div>
+          <div class="romantic-line" id="romanticLine">Aynı odada değiliz ama aynı şarkının içindeyiz.</div>
+          <div class="meter"><div id="meterFill"></div></div>
+        </article>
+
+        <article class="glass card info-card">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Akış</span>
+              <h2>Nasıl kullanılır?</h2>
+            </div>
+          </div>
+          <div class="mini-steps">
+            <div><strong>1</strong><span>Kişi seçilir.</span></div>
+            <div><strong>2</strong><span>Mesajlaşma otomatik aktif olur.</span></div>
+            <div><strong>3</strong><span>Ses için iki taraf da butona basar.</span></div>
+            <div><strong>4</strong><span>Spotify Jam bağlantısından müzik açılır.</span></div>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+  <script src="config.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
